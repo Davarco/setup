@@ -1,0 +1,27 @@
+# ── oh-my-tmux user overrides ─────────────────────────────────────────────────
+
+# ── vim key bindings in copy mode ─────────────────────────────────────────────
+setw -g mode-keys vi
+
+bind -T copy-mode-vi v   send-keys -X begin-selection
+bind -T copy-mode-vi C-v send-keys -X rectangle-toggle
+bind -T copy-mode-vi y   send-keys -X copy-selection-and-cancel
+
+# ── mouse + page navigation ───────────────────────────────────────────────────
+set -g mouse on
+
+# PageUp/PageDown while already in copy mode
+bind -T copy-mode-vi PPage send-keys -X page-up
+bind -T copy-mode-vi NPage send-keys -X page-down
+
+# Press PageUp from normal mode → enter copy mode and scroll up one page
+bind -T root PPage \
+    if-shell -F "#{alternate_on}" \
+        "send-keys PPage" \
+        "copy-mode -e; send-keys -X page-up"
+
+# Scroll with the mouse wheel: enter copy mode automatically
+bind -T root WheelUpPane \
+    if-shell -F "#{alternate_on}" \
+        "send-keys -M" \
+        "if-shell -F '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e; send-keys -M'"
