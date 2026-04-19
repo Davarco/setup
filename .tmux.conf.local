@@ -3,9 +3,27 @@
 # ── vim key bindings in copy mode ─────────────────────────────────────────────
 setw -g mode-keys vi
 
+# Selection modes (v = char, V = line, C-v = block)
 bind -T copy-mode-vi v   send-keys -X begin-selection
+bind -T copy-mode-vi V   send-keys -X select-line
 bind -T copy-mode-vi C-v send-keys -X rectangle-toggle
-bind -T copy-mode-vi y   send-keys -X copy-selection-and-cancel
+
+# Yank: y = selection, Y = whole line (like vim Y)
+bind -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+bind -T copy-mode-vi Y send-keys -X copy-line
+
+# Word motions (w/b/e work natively with mode-keys vi; these are explicit for clarity)
+bind -T copy-mode-vi w send-keys -X next-word
+bind -T copy-mode-vi b send-keys -X previous-word
+bind -T copy-mode-vi e send-keys -X next-word-end
+
+# Line boundaries
+bind -T copy-mode-vi 0 send-keys -X start-of-line
+bind -T copy-mode-vi '$' send-keys -X end-of-line
+
+# Jump to top/bottom of scrollback
+bind -T copy-mode-vi g send-keys -X history-top
+bind -T copy-mode-vi G send-keys -X history-bottom
 
 # ── mouse + page navigation ───────────────────────────────────────────────────
 set -g mouse on
@@ -20,7 +38,7 @@ bind -T root PPage \
         "send-keys PPage" \
         "copy-mode -e; send-keys -X page-up"
 
-# Scroll with the mouse wheel: enter copy mode automatically
+# Mouse wheel from normal mode → enter copy mode automatically
 bind -T root WheelUpPane \
     if-shell -F "#{alternate_on}" \
         "send-keys -M" \

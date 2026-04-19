@@ -102,9 +102,15 @@ python3 "$YCM_DIR/install.py" --clangd-completer
 # ── 11. Atuin ─────────────────────────────────────────────────────────────────
 log "Installing atuin..."
 if ! command -v atuin &>/dev/null; then
-    bash -c "$(curl -fsSL https://setup.atuin.sh)" "" --unattended
+    # Pipe to sh (non-interactive) so the script skips all prompts
+    curl -fsSL https://setup.atuin.sh | sh
 else
     warn "atuin already installed, skipping"
+fi
+
+# Add shell integration without up-arrow hijacking, idempotent
+if ! grep -q 'atuin init' "$HOME/.bashrc"; then
+    echo 'eval "$(atuin init bash --disable-up-arrow)"' >> "$HOME/.bashrc"
 fi
 
 # ── Done ──────────────────────────────────────────────────────────────────────
